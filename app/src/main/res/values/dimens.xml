@@ -1,0 +1,13 @@
+<resources>
+    <dimen name="character_item_icon_margin">16dp</dimen>
+    <dimen name="character_item_icon_size">40dp</dimen>
+    <dimen name="character_info_text_width">158dp</dimen>
+    <dimen name="character_info_margin_top">16dp</dimen>
+    <dimen name="character_info_drawable_padding">8dp</dimen>
+    <dimen name="character_info_text_size">16sp</dimen>
+    <dimen name="character_info_toolbar_font_size">32sp</dimen>
+    <dimen name="character_info_padding">16dp</dimen>
+    <dimen name="character_info_block_margin_top">24dp</dimen>
+    <dimen name="character_info_toolbar_padding_top">4dp</dimen>
+    <dimen name="character_default_margin">8dp</dimen>
+</resources>

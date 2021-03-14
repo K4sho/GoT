@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+        <variable
+            name="character"
+            type="ru.skillbranch.gameofthrones.data.local.entities.CharacterFull" />
+    </data>
+
+    <androidx.constraintlayout.motion.widget.MotionLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/coordinator"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:transitionName="shared_element_container"
+        app:layoutDescription="@xml/collapsing_toolbar">
+
+        <ImageView
+            android:id="@+id/house_arms"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:contentDescription="@null"
+            android:fitsSystemWindows="true"
+            android:scaleType="fitXY"
+            android:src="@drawable/stark_coast_of_arms"
+            android:background="@color/color_accent"
+            app:layout_collapseMode="parallax"
+            tools:visibility="visible" />
+
+        <ImageView
+            android:id="@android:id/home"
+            android:layout_width="wrap_content"
+            android:layout_height="?attr/actionBarSize"
+            android:contentDescription="@null"
+            android:paddingLeft="@dimen/character_info_padding"
+            android:paddingRight="@dimen/character_info_padding"
+            android:src="@drawable/ic_back"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@android:color/white" />
+
+        <TextView
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:layout_marginStart="@dimen/character_default_margin"
+            android:paddingTop="@dimen/character_info_toolbar_padding_top"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/character_info_toolbar_font_size"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@id/house_arms"
+            app:layout_constraintStart_toStartOf="parent"/>
+
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/scroll_view"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="@dimen/character_info_block_margin_top"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/toolbar">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingLeft="@dimen/character_info_padding"
+                android:paddingRight="@dimen/character_info_padding"
+                tools:background="@color/color_gray_light">
+
+                <TextView
+                    android:id="@+id/words_label"
+                    style="@style/CharacterInfoLabelStyle"
+                    android:text="@string/words"
+                    app:layout_constraintEnd_toStartOf="@+id/words"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/words"
+                    style="@style/CharacterInfoTextStyle"
+                    android:text="@{character.words}"
+                    app:layout_constraintBaseline_toBaselineOf="@id/words_label"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/words_label" />
+
+                <TextView
+                    android:id="@+id/born_label"
+                    style="@style/CharacterInfoLabelStyle"
+                    android:text="@string/born"
+                    app:layout_constraintEnd_toStartOf="@+id/born"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/words" />
+
+                <TextView
+                    android:id="@+id/born"
+                    style="@style/CharacterInfoTextStyle"
+                    android:text="@{character.born}"
+                    app:layout_constraintBaseline_toBaselineOf="@id/born_label"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/born_label" />
+
+                <TextView
+                    android:id="@+id/titles_label"
+                    style="@style/CharacterInfoLabelStyle"
+                    android:text="@string/titles"
+                    app:layout_constraintEnd_toStartOf="@+id/titles"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/born" />
+
+                <TextView
+                    android:id="@+id/titles"
+                    style="@style/CharacterInfoTextStyle"
+                    android:singleLine="false"
+                    android:text="@{character.titlesString}"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/titles_label"
+                    app:layout_constraintTop_toTopOf="@+id/titles_label" />
+
+                <TextView
+                    android:id="@+id/aliases_label"
+                    style="@style/CharacterInfoLabelStyle"
+                    android:text="@string/aliases"
+                    app:layout_constraintEnd_toStartOf="@+id/tv_aliases"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/titles" />
+
+                <TextView
+                    android:id="@+id/tv_aliases"
+                    style="@style/CharacterInfoTextStyle"
+                    android:layout_marginBottom="@dimen/character_default_margin"
+                    android:text="@{character.aliasesString}"
+                    app:layout_constraintBaseline_toBaselineOf="@id/aliases_label"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/aliases_label" />
+
+                <androidx.constraintlayout.widget.Group
+                    android:id="@+id/group_father"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    app:constraint_referenced_ids="father_label,father_btn"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tv_aliases" />
+
+                <TextView
+                    android:id="@+id/father_label"
+                    style="@style/CharacterParentsInfoLabelStyle"
+                    android:singleLine="false"
+                    android:text="@string/father"
+                    app:layout_constraintBaseline_toBaselineOf="@id/father_btn"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+                <Button
+                    android:id="@+id/father_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/character_default_margin"
+                    android:textColor="@android:color/white"
+                    app:layout_constraintStart_toEndOf="@+id/father_label"
+                    app:layout_constraintTop_toBottomOf="@id/tv_aliases" />
+
+                <androidx.constraintlayout.widget.Barrier
+                    android:id="@+id/barrier"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:barrierDirection="bottom"
+                    app:constraint_referenced_ids="father_btn,father_label"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+                <androidx.constraintlayout.widget.Group
+                    android:id="@+id/mother_group"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    app:constraint_referenced_ids="mother_label,mother_btn"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/barrier" />
+
+                <TextView
+                    android:id="@+id/mother_label"
+                    style="@style/CharacterParentsInfoLabelStyle"
+                    android:text="@string/mother"
+                    app:layout_constraintBaseline_toBaselineOf="@id/mother_btn"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+                <Button
+                    android:id="@+id/mother_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/character_default_margin"
+                    android:textColor="@android:color/white"
+                    app:layout_constraintStart_toEndOf="@+id/mother_label"
+                    app:layout_constraintTop_toBottomOf="@id/barrier" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.core.widget.NestedScrollView>
+    </androidx.constraintlayout.motion.widget.MotionLayout>
+</layout>

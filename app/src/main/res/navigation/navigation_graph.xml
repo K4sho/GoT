@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navigation_graph"
+    app:startDestination="@id/nav_houses">
+    <fragment
+        android:id="@+id/nav_splash"
+        android:name="ru.skillbranch.gameofthrones.ui.main.SplashFragment"
+        android:label="fragment_splash"
+        tools:layout="@layout/fragment_splash">
+        <action
+            android:id="@+id/splash_to_houses"
+            app:destination="@+id/nav_houses"
+            app:launchSingleTop="true"
+            app:popUpTo="@id/nav_houses"
+            app:popUpToInclusive="true"
+            />
+    </fragment>
+    <fragment
+        android:id="@+id/nav_houses"
+        android:name="ru.skillbranch.gameofthrones.ui.houses.HousesFragment"
+        android:label="fragment_houses"
+        tools:layout="@layout/fragment_houses">
+        <action
+            android:id="@+id/action_houses_to_character"
+            app:destination="@+id/nav_character"/>
+    </fragment>
+    <fragment
+        android:id="@+id/nav_character"
+        android:name="ru.skillbranch.gameofthrones.ui.character.CharacterFragment"
+        android:label="fragment_character"
+        tools:layout="@layout/fragment_character">
+        <argument android:name="characterId"/>
+        <argument android:name="houseName"/>
+        <action
+            android:id="@+id/action_character_self"
+            app:destination="@id/nav_character"/>
+    </fragment>
+
+
+</navigation>

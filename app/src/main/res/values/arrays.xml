@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="housesNames">
+        <item>Stark</item>
+        <item>Lannister</item>
+        <item>Targaryen</item>
+        <item>Baratheon</item>
+        <item>Greyjoy</item>
+        <item>Martel</item>
+        <item>Tyrell</item>
+    </string-array>
+</resources>

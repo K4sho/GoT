@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">GameOfThrones</string>
+    <string name="title_search">ac</string>
+    <string name="splash_screen">SplashScreen</string>
+
+    <string name="words">Words:</string>
+    <string name="born">Born:</string>
+    <string name="titles">Titles:</string>
+    <string name="aliases">Aliases:</string>
+    <string name="father">Father:</string>
+    <string name="mother">Mother:</string>
+
+    <string name="error_no_network">The Internet is unavailable - the app can\'t be started. Connect to the Internet and restart the app</string>
+
+    <string name="no_information">Information is unknown</string>
+    <string name="search_character">Search character</string>
+</resources>
