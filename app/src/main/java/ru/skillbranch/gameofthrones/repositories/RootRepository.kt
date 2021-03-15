@@ -5,10 +5,12 @@ import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import ru.skillbranch.gameofthrones.App
 import ru.skillbranch.gameofthrones.data.local.entities.CharacterFull
 import ru.skillbranch.gameofthrones.data.local.entities.CharacterItem
 import ru.skillbranch.gameofthrones.data.remote.res.CharacterRes
 import ru.skillbranch.gameofthrones.data.remote.res.HouseRes
+import ru.skillbranch.gameofthrones.network.ApiHelper
 import ru.skillbranch.gameofthrones.network.NetworkService
 
 object RootRepository {
@@ -16,8 +18,12 @@ object RootRepository {
         println("CoroutineExceptionHandler got $exception")
     }
 
+    // SupervisorJob() нужен для того, что бы при краше дочерней корутины не закрывались все остальные
     private val coroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.IO + handler)
     private val apiHelper = ApiHelper(NetworkService.getJSONApi())
+
+    /// Метод для проверки нужно дли обновить БД. Просто проверим есть ли там данные
+    suspend fun needUpdate(): Boolean = App.database.isEmpty()
     /**
      * Получение данных о всех домах из сети
      * @param result - колбек содержащий в себе список данных о домах

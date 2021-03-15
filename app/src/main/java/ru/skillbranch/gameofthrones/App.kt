@@ -5,6 +5,7 @@ import androidx.annotation.ColorInt
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.room.Room
+import ru.skillbranch.gameofthrones.db.AppDataBase
 import ru.skillbranch.gameofthrones.db.AppDatabase
 
 data class HouseUiSettings(
@@ -24,7 +25,7 @@ class App : Application() {
     }
 
     companion object {
-        lateinit var database: AppDatabase
+        lateinit var database: AppDataBase
         private val houses = listOf(
             HouseUiSettings(
                 "Stark",

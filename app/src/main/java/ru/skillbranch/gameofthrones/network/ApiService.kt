@@ -12,7 +12,7 @@ interface ApiService {
     suspend fun getHousesAsync(@Query(value = "page")page: Int, @Query(value = "pageSize")pageSize: Int): Response<List<HouseRes>>
 
     @GET("houses")
-    suspend fun getHousesByNameAsync(@Query(value = "name")name: String): Response<List<HouseRes>>
+    suspend fun getHouseByNameAsync(@Query(value = "name")name: String): Response<List<HouseRes>>
 
     @GET("characters/{id}")
     suspend fun getCharacterAsync(@Path("id")id: String): Response<CharacterRes>
