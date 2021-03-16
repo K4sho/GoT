@@ -1,18 +1,22 @@
 package ru.skillbranch.gameofthrones.repositories
 
 import androidx.annotation.VisibleForTesting
-import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.*
 import ru.skillbranch.gameofthrones.App
+import ru.skillbranch.gameofthrones.AppConfig
+import ru.skillbranch.gameofthrones.data.local.entities.Character
 import ru.skillbranch.gameofthrones.data.local.entities.CharacterFull
 import ru.skillbranch.gameofthrones.data.local.entities.CharacterItem
+import ru.skillbranch.gameofthrones.data.local.entities.House
 import ru.skillbranch.gameofthrones.data.remote.res.CharacterRes
 import ru.skillbranch.gameofthrones.data.remote.res.HouseRes
+import ru.skillbranch.gameofthrones.data.remote.res.toCharacter
+import ru.skillbranch.gameofthrones.data.remote.res.toHouse
 import ru.skillbranch.gameofthrones.network.ApiHelper
 import ru.skillbranch.gameofthrones.network.NetworkService
+import ru.skillbranch.gameofthrones.network.Result
 
+/// Единственный и общий репозиторий
 object RootRepository {
     private val handler = CoroutineExceptionHandler { _, exception ->
         println("CoroutineExceptionHandler got $exception")
@@ -24,13 +28,53 @@ object RootRepository {
 
     /// Метод для проверки нужно дли обновить БД. Просто проверим есть ли там данные
     suspend fun needUpdate(): Boolean = App.database.isEmpty()
+
+    /// Метод для заполнения таблиц данными
+    suspend fun fillData() {
+        val housesFromNetwork = (getNeedHouseWithCharactersInternal(*AppConfig.NEED_HOUSES))
+        coroutineScope.launch {
+            val houses = housesFromNetwork.map { it.first.toHouse() }
+            launch {
+                App.database.getHouseDao().insertHouses(houses)
+            }
+            housesFromNetwork.forEach { houseNet ->
+                launch {
+                    val characters = houseNet.second.map { it.toCharacter() }
+                    App.database.getCharacterDao().insertCharacters(characters)
+                }
+            }
+        }.join()
+    }
+
+    suspend fun getCharactersByHouseName(name: String) =
+        App.database.getCharacterDao().getCharactersByHouseName(name)
+
+    suspend fun getFullCharacter(id: String) = App.database.getCharacterDao().getFullCharacterInfo(id)
+
     /**
      * Получение данных о всех домах из сети
      * @param result - колбек содержащий в себе список данных о домах
      */
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     fun getAllHouses(result : (houses : List<HouseRes>) -> Unit) {
-        //TODO implement me
+        val resultList = mutableListOf<HouseRes>()
+        coroutineScope.launch {
+            var pageNumber: Int = 1
+            while (true) {
+                val response = apiHelper.getHouses(pageNumber)
+                // Если запрос не удачный - возвращаем управление
+                if (response !is Result.Success) {
+                    return@launch
+                }
+                // Если данных по этому дому нет - продолажаем со следующим
+                if (response.data.isEmpty()) {
+                    break;
+                }
+                resultList.addAll(response.data)
+                pageNumber++
+            }
+            result(resultList)
+        }
     }
 
     /**
@@ -40,7 +84,9 @@ object RootRepository {
      */
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     fun getNeedHouses(vararg houseNames: String, result : (houses : List<HouseRes>) -> Unit) {
-        //TODO implement me
+        coroutineScope.launch {
+            result(getNeedHousesInternal(*houseNames))
+        }
     }
 
     /**
@@ -50,7 +96,9 @@ object RootRepository {
      */
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     fun getNeedHouseWithCharacters(vararg houseNames: String, result : (houses : List<Pair<HouseRes, List<CharacterRes>>>) -> Unit) {
-        //TODO implement me
+        coroutineScope.launch {
+            result(getNeedHouseWithCharactersInternal(*houseNames))
+        }
     }
 
     /**
@@ -61,7 +109,12 @@ object RootRepository {
      */
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     fun insertHouses(houses : List<HouseRes>, complete: () -> Unit) {
-        //TODO implement me
+        val listHouses = mutableListOf<House>()
+        houses.forEach{ house -> listHouses.add(house.toHouse())}
+        coroutineScope.launch {
+            App.database.getHouseDao().insertHouses(listHouses)
+            complete()
+        }
     }
 
     /**
@@ -72,7 +125,12 @@ object RootRepository {
      */
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     fun insertCharacters(Characters : List<CharacterRes>, complete: () -> Unit) {
-        //TODO implement me
+        val listCharactersHouses = mutableListOf<Character>()
+        Characters.forEach { characterRes -> listCharactersHouses.add(characterRes.toCharacter()) }
+        coroutineScope.launch {
+            App.database.getCharacterDao().insertCharacters(listCharactersHouses)
+            complete()
+        }
     }
 
     /**
@@ -81,7 +139,10 @@ object RootRepository {
      */
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     fun dropDb(complete: () -> Unit) {
-        //TODO implement me
+        coroutineScope.launch {
+            App.database.cleanDb()
+            complete()
+        }
     }
 
     /**
@@ -92,7 +153,9 @@ object RootRepository {
      */
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     fun findCharactersByHouseName(name : String, result: (characters : List<CharacterItem>) -> Unit) {
-        //TODO implement me
+        coroutineScope.launch {
+            result(App.database.getCharacterDao().getCharactersByHouseName(name))
+        }
     }
 
     /**
@@ -103,7 +166,9 @@ object RootRepository {
      */
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     fun findCharacterFullById(id : String, result: (character : CharacterFull) -> Unit) {
-        //TODO implement me
+        coroutineScope.launch {
+            result(App.database.getCharacterDao().getFullCharacterInfo(id))
+        }
     }
 
     /**
@@ -111,7 +176,49 @@ object RootRepository {
      * @param result - колбек о завершении очистки db
      */
     fun isNeedUpdate(result: (isNeed : Boolean) -> Unit){
-        //TODO implement me
+        coroutineScope.launch {
+            result(App.database.isEmpty())
+        }
     }
 
+    /// Метод запрашивает список домов через АПИ по именам
+    private suspend fun getNeedHousesInternal(vararg houseNames: String): List<HouseRes> {
+        val resultList = mutableListOf<HouseRes>()
+        coroutineScope.launch {
+            houseNames.forEach { houseName ->
+                val response = apiHelper.getHousesByName(houseName)
+                if (response is Result.Success) {
+                    val netResult = response.data
+                    netResult.let {
+                        resultList.add(it)
+                    }
+                }
+            }
+        }.join()
+        return resultList
+    }
+
+    /// Метод возвращает список пар - (Дом, список персонажей дома). Получает имена домов
+    private suspend fun getNeedHouseWithCharactersInternal(vararg houseNames: String): List<Pair<HouseRes, List<CharacterRes>>> {
+        val resultList = mutableListOf<Pair<HouseRes, List<CharacterRes>>>()
+        // Получим список домов
+        val houses = getNeedHousesInternal(*houseNames)
+
+        coroutineScope.launch {
+            houses.forEach { house ->
+                val characters = mutableListOf<CharacterRes>()
+                resultList.add(house to characters)
+                house.swornMembers.forEach { houseMember ->
+                    launch {
+                        val response = apiHelper.getCharacter(houseMember)
+                        if (response is Result.Success) {
+                            val netResult = response.data
+                            characters.add(netResult.apply { houseId = house.url })
+                        }
+                    }
+                }
+            }
+        }.join()
+        return resultList
+    }
 }

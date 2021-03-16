@@ -1,8 +1,9 @@
+
 package ru.skillbranch.gameofthrones.data.remote.res
 
-/**
- * DTO для получения JSON ответа по запросу информации о доме от Api
- */
+import ru.skillbranch.gameofthrones.App
+import ru.skillbranch.gameofthrones.data.local.entities.House
+
 data class HouseRes(
     val url: String,
     val name: String,
@@ -20,4 +21,24 @@ data class HouseRes(
     val ancestralWeapons: List<String> = listOf(),
     val cadetBranches: List<Any> = listOf(),
     val swornMembers: List<String> = listOf()
+) : IRes {
+    override val id: String
+        get() = App.getHouseHeader(name)
+}
+
+fun HouseRes.toHouse() = House(
+    id = id,
+    name = name,
+    region = region,
+    coatOfArms = coatOfArms,
+    words = words,
+    titles = titles,
+    seats = seats,
+    currentLord = currentLord.lastSegment(),
+    heir = heir,
+    overlord = overlord.lastSegment(),
+    founded = founded,
+    founder = founder.lastSegment(),
+    diedOut = diedOut,
+    ancestralWeapons = ancestralWeapons
 )

@@ -6,7 +6,6 @@ import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.room.Room
 import ru.skillbranch.gameofthrones.db.AppDataBase
-import ru.skillbranch.gameofthrones.db.AppDatabase
 
 data class HouseUiSettings(
     val name: String,
@@ -20,7 +19,7 @@ data class HouseUiSettings(
 class App : Application() {
     override fun onCreate() {
         super.onCreate()
-        database = Room.databaseBuilder(this, AppDatabase::class.java, "game_of_thrones_db")
+        database = Room.databaseBuilder(this, AppDataBase::class.java, "game_of_thrones_db")
             .build()
     }
 
