@@ -1,11 +1,9 @@
 package ru.skillbranch.gameofthrones.db
 
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
-import androidx.room.Transaction
+import androidx.room.*
 import ru.skillbranch.gameofthrones.data.local.entities.House
 
+@Dao
 abstract class HouseDao {
     // Заполнить таблицу списком домов
     @Transaction
