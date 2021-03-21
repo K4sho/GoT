@@ -32,16 +32,13 @@ class MainActivity : AppCompatActivity() {
             when(it) {
                 DataLoadingViewModel.LoadingDataState.UNKNOWN -> {
                     viewModel.loadData()
-                    Log.d("network", "Load data")
                     navController.navigate(R.id.nav_splash)
                 }
                 DataLoadingViewModel.LoadingDataState.FINISHED -> {
-                    Log.d("network", "Finished network load")
                     navController.navigate(R.id.splash_to_houses)
                 }
                 DataLoadingViewModel.LoadingDataState.ERROR -> {
                     val parentLayout: View = findViewById(R.id.nav_host_fragment)
-                    Log.d("network", "ERROR network load")
                     Snackbar
                         .make(parentLayout, viewModel.getErrorString(), Snackbar.LENGTH_LONG)
                         .show()

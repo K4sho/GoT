@@ -1,5 +1,6 @@
 package ru.skillbranch.gameofthrones.db
 
+import android.util.Log
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
@@ -24,7 +25,7 @@ abstract class AppDataBase : RoomDatabase() {
     }
 
     suspend fun isEmpty() : Boolean {
-        return  getCharacterDao().getCount() == 0 &&
+        return  getCharacterDao().getCount() == 0 ||
                 getHouseDao().getCount() == 0
     }
 }
