@@ -1,5 +1,6 @@
 package ru.skillbranch.gameofthrones.repositories
 
+import android.util.Log
 import androidx.annotation.VisibleForTesting
 import kotlinx.coroutines.*
 import ru.skillbranch.gameofthrones.App
@@ -46,8 +47,7 @@ object RootRepository {
         }.join()
     }
 
-    suspend fun getCharactersByHouseName(name: String) =
-        App.database.getCharacterDao().getCharactersByHouseName(name)
+    suspend fun getCharactersByHouseName(name: String): List<CharacterItem> = App.database.getCharacterDao().getCharactersByHouseName(name)
 
     suspend fun getFullCharacter(id: String) = App.database.getCharacterDao().getFullCharacterInfo(id)
 
@@ -203,7 +203,6 @@ object RootRepository {
         val resultList = mutableListOf<Pair<HouseRes, List<CharacterRes>>>()
         // Получим список домов
         val houses = getNeedHousesInternal(*houseNames)
-
         coroutineScope.launch {
             houses.forEach { house ->
                 val characters = mutableListOf<CharacterRes>()
@@ -213,7 +212,7 @@ object RootRepository {
                         val response = apiHelper.getCharacter(houseMember)
                         if (response is Result.Success) {
                             val netResult = response.data
-                            characters.add(netResult.apply { houseId = house.url })
+                            characters.add(netResult.apply { houseId = house.id })
                         }
                     }
                 }

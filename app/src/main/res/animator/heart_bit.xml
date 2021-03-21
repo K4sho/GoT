@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<objectAnimator xmlns:android="http://schemas.android.com/apk/res/android"
+    android:duration="5000"
+    android:interpolator="@android:interpolator/linear"
+    android:repeatCount="infinite"
+    android:repeatMode="reverse">
+    <propertyValuesHolder android:valueType="intType">
+        <keyframe
+            android:fraction="0"
+            android:value="255" />
+        <keyframe
+            android:fraction=".2"
+            android:value="100" />
+        <keyframe
+            android:fraction=".4"
+            android:value="160" />
+        <keyframe
+            android:fraction=".6"
+            android:value="40" />
+        <keyframe
+            android:fraction=".8"
+            android:value="85" />
+        <keyframe
+            android:fraction="1"
+            android:value="0" />
+    </propertyValuesHolder>
+</objectAnimator>
